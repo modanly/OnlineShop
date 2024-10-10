@@ -1,0 +1,57 @@
+﻿@model CartViewModel
+
+@if (Model == null || Model.Items.Count == 0)
+{
+    <h3>Корзина пустая</h3>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Цена руб</th>
+                        <th>Количество</th>
+                        <th>Стоимость руб</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Product.Cost</td>
+                            <td>
+                                <a class="btn btn-outline-warning text-black" href="/cart/decreaseAmount?productId=@item.Product.Id" role="button">-</a>
+                                @item.Amount
+                                <a class="btn btn-outline-warning text-black" href="/cart/add?productId=@item.Product.Id" role="button">+</a>
+                            </td>
+                            <td>@item.Cost</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-end">
+                <h3>Итого: @Model.Cost</h3>
+
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    
+
+                    <a class="btn btn-outline-danger" asp-area="" asp-controller="Cart" asp-action="Clear" role="button">Очистить корзину</a>
+                </div>
+                <div class="col-9 d-flex align-self-center justify-content-end">
+                    <a class="btn btn-light me-1" asp-area="" asp-controller="Home" asp-action="Index" role="button">Продолжить покупки</a>
+                    <a class="btn btn-warning" asp-area="" asp-controller="Order" asp-action="Index" role="button">Оформить заказ</a>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,79 @@
+﻿@{
+    int i = 1;
+}
+
+@model List<OrderViewModel>;
+<div class="row">
+    <div class="col-lg-3">
+        <div class="my-4">
+            @await Html.PartialAsync("AdminLeftMenu")
+        </div>
+    </div>
+    
+    <div class="col-9">
+        <h3>Список заказов</h3>
+
+        @if (Model == null)
+        {
+            <h3>Заказов нет</h3>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                                <th>Пользователь(логин)</th>
+                                <th>Дата</th>
+                                <th>Время</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@string.Format("{0:### ### ###}", order.Cost) р</td>
+                                    @switch (order.Status)
+                                    {
+                                        case OrderStatusesViewModel.Created:
+                                            <td>Создан</td>
+                                            ; break;
+                                        case OrderStatusesViewModel.Processed:
+                                            <td>Обработан</td>
+                                            ; break;
+                                        case OrderStatusesViewModel.Delivering:
+                                            <td>В пути</td>
+                                            ; break;
+                                        case OrderStatusesViewModel.Delivered:
+                                            <td>Доставлен</td>
+                                            ; break;
+                                        case OrderStatusesViewModel.Canceled:
+                                            <td>Отменен</td>
+                                            ; break;
+                                    }
+                                    <td>@order.User.Email</td>
+                                    <td>@order.CreatedDateTime</td>
+                                    
+                                    <td class="col-4 text-end">
+                                        <a class="btn btn-outline-warning" asp-area="Admin" asp-controller="Order" asp-action="Detail" asp-route-id="@order.Id"><i class="bi bi-pencil"> Подробнее </i></a>
+                                    </td>
+                                </tr>
+                                i += 1;
+                            }
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        }
+    </div>
+
+
+</div>

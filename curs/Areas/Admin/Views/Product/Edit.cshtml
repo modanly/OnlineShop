@@ -1,0 +1,37 @@
+﻿@model ProductViewModel
+
+<form method="post">
+    <h4>Редактирование товара</h4>
+    <br />
+    <div class="row">
+        <label for="name" class="col-sm-2 col-form-label">Название товара:</label>
+        <div class="col-sm-8">
+            <input name="Name" type="text" class="form-control" id="name" value="@Model.Name">
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <label for="cost" class="col-sm-2 col-form-label">Цена товара, руб.:</label>
+        <div class="col-sm-8">
+            <input name="Cost" type="text" class="form-control" id="cost" value="@Model.Cost">
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <label for="imagePath" class="col-sm-2 col-form-label">Изорбражение товара:</label>
+        <div class="col-sm-8">
+            <input name="ImagePath" type="text" class="form-control" id="imagePath" value="@Model.ImagePath">
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <label for="description" class="col-sm-2 col-form-label">Описание товара:</label>
+        <div class="col-sm-8">
+            <input name="Description" type="text" class="form-control" id="description" value="@Model.Description">
+        </div>
+    </div>
+    <br />
+    <br />
+    <button type="submit" class="btn btn-primary" asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id">Сохранить</button>
+    <a class="btn btn-outline-primary" asp-area="Admin" asp-controller="Product" asp-action="Index">Отмена</a>
+</form>

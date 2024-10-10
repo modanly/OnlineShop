@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "curs", "curs\curs.csproj", "{2BF864DA-34A4-4E22-B621-3C522BF6B96F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineShop.Db", "OnlineShop.Db\OnlineShop.Db.csproj", "{0C9D1471-8BAB-4D2F-9CED-74E13DAFFC7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2BF864DA-34A4-4E22-B621-3C522BF6B96F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BF864DA-34A4-4E22-B621-3C522BF6B96F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BF864DA-34A4-4E22-B621-3C522BF6B96F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BF864DA-34A4-4E22-B621-3C522BF6B96F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C9D1471-8BAB-4D2F-9CED-74E13DAFFC7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C9D1471-8BAB-4D2F-9CED-74E13DAFFC7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C9D1471-8BAB-4D2F-9CED-74E13DAFFC7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C9D1471-8BAB-4D2F-9CED-74E13DAFFC7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B27A8B33-9D15-4487-893A-3BF0D8D1F7BA}
+	EndGlobalSection
+EndGlobal
