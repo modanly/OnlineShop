@@ -1,7 +1,7 @@
-﻿using curs.Areas.Admin.Models;
-using curs.Models;
+﻿using OnlineShop.Areas.Admin.Models;
+using OnlineShop.Models;
 
-namespace curs
+namespace OnlineShop
 {
     public interface IUsersRepository
     {

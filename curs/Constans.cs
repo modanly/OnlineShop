@@ -1,4 +1,4 @@
-﻿namespace curs
+﻿namespace OnlineShop
 {
     public static class Constans
     {

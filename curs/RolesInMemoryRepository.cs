@@ -1,6 +1,6 @@
-﻿using curs.Areas.Admin.Models;
+﻿using OnlineShop.Areas.Admin.Models;
 
-namespace curs
+namespace OnlineShop
 {
     public class RolesInMemoryRepository:IRolesRepository
     {

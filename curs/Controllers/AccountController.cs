@@ -1,7 +1,7 @@
-﻿using curs.Models;
+﻿using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace curs.Controllers
+namespace OnlineShop.Controllers
 {
     public class AccountController : Controller
     {

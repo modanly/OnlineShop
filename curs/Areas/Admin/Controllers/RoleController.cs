@@ -1,7 +1,7 @@
-﻿using curs.Areas.Admin.Models;
+﻿using OnlineShop.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace curs.Areas.Admin.Controllers
+namespace OnlineShop.Areas.Admin.Controllers
 {
     public class RoleController : Controller
     {

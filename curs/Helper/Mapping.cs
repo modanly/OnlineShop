@@ -1,8 +1,8 @@
-﻿using curs.Models;
+﻿using OnlineShop.Models;
 using OnlineShop.Db.Models;
 
 
-namespace curs.Helper
+namespace OnlineShop.Helper
 {
     public static class Mapping
     {

@@ -1,4 +1,4 @@
-using curs;
+using OnlineShop;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Db;

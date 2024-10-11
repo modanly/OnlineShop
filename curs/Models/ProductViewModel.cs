@@ -1,8 +1,8 @@
-﻿using curs.Areas.Admin.Models;
+﻿using OnlineShop.Areas.Admin.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 
-namespace curs.Models
+namespace OnlineShop.Models
 {
     public class ProductViewModel
     {

@@ -1,7 +1,7 @@
 ﻿
-using curs.Areas.Admin.Models;
+using OnlineShop.Areas.Admin.Models;
 
-namespace curs.Models
+namespace OnlineShop.Models
 {
     public class User
     {

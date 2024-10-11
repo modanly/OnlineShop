@@ -1,10 +1,10 @@
-﻿using curs.Helper;
-using curs.Models;
+﻿using OnlineShop.Helper;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
 using OnlineShop.Db.Models;
 
-namespace curs.Areas.Admin.Controllers
+namespace OnlineShop.Areas.Admin.Controllers
 {
     public class ProductController : Controller
     {

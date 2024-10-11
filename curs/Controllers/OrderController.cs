@@ -1,10 +1,10 @@
 ﻿using OnlineShop.Db;
 using Microsoft.AspNetCore.Mvc;
-using curs.Models;
-using curs.Helper;
+using OnlineShop.Models;
+using OnlineShop.Helper;
 using OnlineShop.Db.Models;
 
-namespace curs.Controllers
+namespace OnlineShop.Controllers
 {
     public class OrderController : Controller
     {

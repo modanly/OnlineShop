@@ -1,6 +1,6 @@
-﻿using curs.Models;
+﻿using OnlineShop.Models;
 
-namespace curs.Models
+namespace OnlineShop.Models
 {
     public enum OrderStatusesViewModel
     {

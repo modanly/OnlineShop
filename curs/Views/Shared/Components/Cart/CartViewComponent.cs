@@ -1,10 +1,10 @@
-﻿using curs.Helper;
-using curs.Models;
+﻿using OnlineShop.Helper;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
 
 
-namespace curs.Views.Shared.Component.Cart
+namespace OnlineShop.Views.Shared.Component.Cart
 {
     public class CartViewComponent:ViewComponent
     {

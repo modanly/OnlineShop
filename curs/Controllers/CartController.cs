@@ -1,9 +1,9 @@
-﻿using curs.Helper;
+﻿using OnlineShop.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
 
-namespace curs.Controllers
+namespace OnlineShop.Controllers
 {
     public class CartController : Controller
     {

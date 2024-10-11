@@ -1,11 +1,11 @@
 ﻿
-using curs.Helper;
-using curs.Models;
+using OnlineShop.Helper;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
 using System.Diagnostics;
 
-namespace curs.Controllers
+namespace OnlineShop.Controllers
 {
     public class HomeController : Controller
     {

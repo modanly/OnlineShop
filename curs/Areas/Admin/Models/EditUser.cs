@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace curs.Areas.Admin.Models
+namespace OnlineShop.Areas.Admin.Models
 {
     public class EditUser
     {

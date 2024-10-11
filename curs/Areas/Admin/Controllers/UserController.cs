@@ -1,9 +1,9 @@
-﻿using curs.Areas.Admin.Models;
-using curs.Models;
+﻿using OnlineShop.Areas.Admin.Models;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
 
-namespace curs.Areas.Admin.Controllers
+namespace OnlineShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class UserController : Controller
