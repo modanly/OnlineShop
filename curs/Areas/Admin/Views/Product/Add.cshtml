@@ -1,4 +1,4 @@
-﻿@model ProductViewModel
+﻿@model AddProductViewModel
 <div class="container">
     <div class="row">
 
@@ -8,7 +8,7 @@
 
             <div class="text-danger font-weight-bold" asp-validation-summary="ModelOnly"></div>
 
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label asp-for="Name">Название</label><br />
@@ -26,6 +26,13 @@
                     <label asp-for="Description">Описание</label>
                     <input asp-for="Description" class="form-control">
                     <span asp-validation-for="Description" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="UploadedFiles">Загрузить изображение</label>
+                    <input type="file" name="UploadedFiles" multiple accept="image/*" class="form-control">
+                    <span asp-validation-for="UploadedFiles" />
+                    
                 </div>
 
                 

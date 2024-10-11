@@ -69,6 +69,41 @@ namespace OnlineShop.Db.Migrations
                     b.ToTable("CartItem");
                 });
 
+            modelBuilder.Entity("OnlineShop.Db.Models.Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Image", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6175de51-f5f6-4d7d-b158-2922f06ea791"),
+                            ProductId = new Guid("c5425e02-55f1-4590-af64-67ea3f8562c9"),
+                            Url = "/images/Products/image1.jpeg"
+                        },
+                        new
+                        {
+                            Id = new Guid("3262d0ad-ada6-404c-b2af-9a0b903acbfa"),
+                            ProductId = new Guid("3a0475bc-810e-4d36-8f24-774e16b2a89c"),
+                            Url = "/images/Products/image2.jpeg"
+                        });
+                });
+
             modelBuilder.Entity("OnlineShop.Db.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -97,14 +132,16 @@ namespace OnlineShop.Db.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 4)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -115,6 +152,22 @@ namespace OnlineShop.Db.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c5425e02-55f1-4590-af64-67ea3f8562c9"),
+                            Cost = 10m,
+                            Description = "DESC1",
+                            Name = "Name1"
+                        },
+                        new
+                        {
+                            Id = new Guid("3a0475bc-810e-4d36-8f24-774e16b2a89c"),
+                            Cost = 100m,
+                            Description = "DESC2",
+                            Name = "Name2"
+                        });
                 });
 
             modelBuilder.Entity("OnlineShop.Db.Models.UserDeliveryInfo", b =>
@@ -155,7 +208,18 @@ namespace OnlineShop.Db.Migrations
                         .HasForeignKey("OrderId");
 
                     b.HasOne("OnlineShop.Db.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("CartItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("OnlineShop.Db.Models.Image", b =>
+                {
+                    b.HasOne("OnlineShop.Db.Models.Product", "Product")
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -182,6 +246,13 @@ namespace OnlineShop.Db.Migrations
             modelBuilder.Entity("OnlineShop.Db.Models.Order", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("OnlineShop.Db.Models.Product", b =>
+                {
+                    b.Navigation("CartItems");
+
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

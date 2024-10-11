@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using OnlineShop.Db.Models;
 using System.Linq;
 
@@ -12,52 +13,86 @@ namespace OnlineShop.Db
             this.databaseContext = databaseContext;
         }
 
-      //  private List<Product> products = new List<Product>()
-      //{
-      //    new Product("Поводок BullyBillows Swivel Combat, черный, 3 м", 6500, "- Стропа прошита неопреном\n- Поворотный механизм крепления\n- Специальный механизм замка «cobra»", "/images/image1.jpeg"),
-      //    new Product("Ошейник Zee.Dog Blast, M, мультиколор", 2340, "- Двойная защита швов\n- 4-точечная система блокировки замка", "/images/image2.jpeg"),
-      //    new Product("Ошейник Zee.Dog Sand, XS, бежевый", 1940, "- Двойная защита швов\n- 4-точечная система блокировки замка", "/images/image3.jpeg"),
-      //    new Product("Шлейка Zee.Dog Mahalo, L, розовый", 4800, "- Прочный и мягкий полиэстер\n- 4-точечная система блокировки замка\n- Подходит для щенков\n- анатомическая конструкция", "/images/image4.jpeg")
-      //};
 
-        public void Add(Product product)
+
+        public async Task AddAsync(Product product)
         {
-            product.ImagePath = "/images/image1.jpeg";
-            databaseContext.Products.Add(product);
-            databaseContext.SaveChanges();
+
+            databaseContext.Products.AddAsync(product);
+            await databaseContext.SaveChangesAsync();
         }
 
-        public List<Product> GetAll() 
+        public async Task<List<Product>> GetAllAsync()
         {
-            return databaseContext.Products.ToList(); 
+            return await databaseContext.Products.Include(x => x.Images).ToListAsync();
         }
 
-        public Product TryGetById(Guid id)
+        public async Task<Product> TryGetByIdAsync(Guid productId)
         {
-            return databaseContext.Products.FirstOrDefault(product => product.Id == id);
+            return await databaseContext.Products.Include(x => x.Images).FirstOrDefaultAsync(product => product.Id == productId);
 
         }
-
-        public void Update(Product product)
+        public async Task UpdateAsync(Product product)
         {
-            var existingProduct= databaseContext.Products.FirstOrDefault(x => x.Id == product.Id);
-            if (existingProduct == null) 
+            var existingProduct = await databaseContext.Products.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == product.Id);
+            
+            //var existingProduct = await TryGetByIdAsync(product.Id);
+
+
+
+            // Устанавливаем оригинальный токен для оптимистической блокировки
+            //databaseContext.Entry(existingProduct).Property("ConcurrencyToken").OriginalValue = product.ConcurrencyToken;
+
+            // Обновление данных товара
+            existingProduct.Name = product.Name;
+            existingProduct.Description = product.Description;
+            existingProduct.Cost = product.Cost;
+            existingProduct.ConcurrencyToken = product.ConcurrencyToken;
+
+            // Обновление изображений
+            foreach (var image in product.Images)
             {
-                return;
+                // Проверяем, если изображение новое, то добавляем его
+                if (!existingProduct.Images.Any(i => i.Url == image.Url))
+                {
+                    databaseContext.Images.Add(image);
+                }
             }
-            existingProduct.Name= product.Name;
-            existingProduct.Description= product.Description;
-            existingProduct.Cost= product.Cost;
-            databaseContext.SaveChanges();
-        }
 
-        public void Del(Guid id)
+            await databaseContext.SaveChangesAsync();
+        }
+        //public async Task UpdateAsync(Product product)
+        //{
+        //    var existingProduct = await databaseContext.Products.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == product.Id);
+
+        //    if (existingProduct == null)
+        //    {
+        //        return;
+        //    }
+
+        //    // Устанавливаем оригинальное значение ConcurrencyToken перед обновлением
+        //    databaseContext.Entry(existingProduct).Property("ConcurrencyToken").OriginalValue = product.ConcurrencyToken;
+
+        //    existingProduct.Name = product.Name;
+        //    existingProduct.Description = product.Description;
+        //    existingProduct.Cost = product.Cost;
+
+        //    foreach (var image in product.Images)
+        //    {
+        //        image.ProductId = product.Id;
+        //        databaseContext.Images.Add(image);
+        //    }
+
+        //    await databaseContext.SaveChangesAsync();
+        //}
+
+        public async Task DelAsync(Guid id)
         {
-            var product = TryGetById(id);
+            var product = await TryGetByIdAsync(id);
             databaseContext.Products.Remove(product);
-            databaseContext.SaveChanges();
+            await databaseContext.SaveChangesAsync();
         }
 
-       
+
     }
 }
