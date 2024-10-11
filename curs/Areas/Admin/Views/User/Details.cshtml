@@ -1,4 +1,4 @@
-﻿@model User;
+﻿@model UserViewModel;
 <form method="post">
     <div class="row">
         <div class="col-lg-3">
@@ -14,29 +14,29 @@
                     <th>Email:</th>
                     <td>@Model.UserName</td>
                 </tr>
-                <tr>
-                    <th>Имя:</th>
-                    <td>@Model.FirstName</td>
-                </tr>
-                <tr>
-                    <th>Фамилия:</th>
-                    <td>@Model.LastName</td>
-                </tr>
+                
                 <tr>
                     <th>Телефон:</th>
                     <td>@Model.Phone</td>
                 </tr>
                 <tr>
-                    <th>Роль:</th>
-                    <td>@Model.Role.Name</td>
+                    <th>Роли пользователя:</th>
+                    <td>
+                         @foreach (var role in Model.Roles)
+                                        {
+                                            <span>@role.Name</span>
+
+                                            <br />
+                                        }
+                    </td>
                 </tr>
             </table>
             <br />
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Действия</button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="ChangePassword" asp-route-userId="@Model.Id">Смена пароля</a></li>
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="ChangePassword" asp-route-userName="@Model.UserName">Смена пароля</a></li>
                 <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Id">Редактирование данных</a></li>
-                <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="ChangeAccess" asp-route-userId="@Model.Id">Права доступа</a></li>
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="EditRights" asp-route-userId="@Model.Id">Права доступа</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <!-- Кнопка-триггер модального окна -->
                 <li><button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Удалить пользователя</button></li>
@@ -58,7 +58,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <a type="button" asp-area="Admin" class="btn btn-primary" asp-controller="User" asp-action="Del" asp-route-userId="@Model.Id">Удалить</a>
+                <a type="button" asp-area="Admin" class="btn btn-primary" asp-controller="User" asp-action="Del" asp-route-userName="@Model.UserName">Удалить</a>
             </div>
         </div>
     </div>

@@ -1,42 +1,35 @@
 ﻿@model Login
-<div class="container">
+<form method="post">
+    <div>
+        <h3>Вход</h3>
+    </div>
+
+    <div class="text-danger font-weight-bold" asp-validation-summary="All"></div>
+   
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
     
 
-        <div class="form-signin w-25 m-auto">
-
-            
-
-            <h1 class="h3 mb-3 fw-normal">Введите логин и пароль.</h1>
-
-            <div class="text-danger font-weight-bold" asp-validation-summary="ModelOnly"></div>
-
-
-            <form method="post">
-
-                <div class="form-group">
-                    
-                    <input asp-for="UserName" class="form-control" placeholder="Логин"/>
-                    <span asp-validation-for="UserName" />
-                </div>
-
-                <div class="form-group">
-                    
-                    <input asp-for="Password" class="form-control" placeholder="Пароль">
-                    <span asp-validation-for="Password" />
-                </div>
-
-                <div>
-                    <input type="checkbox" name="rememberMe">
-                    <label>Запомнить меня</label>
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary" value="Войти" asp-controller="Account" asp-action="Login">
-                </div>
-
-                <p>Нет аккаунта? <a href="/account/register">Создайте его за минуту</a>.</p>
-
-            </form>
+    <div class="row">
+        <div class="col-6">
+            <input asp-for="UserName" class="form-control" placeholder="Логин" />
+            <span asp-validation-for="UserName" />
         </div>
-    
-</div>
+    </div>
+    <div class="row">
+        <div class="col-6">
 
+            <input asp-for="Password" class="form-control" placeholder="Пароль">
+            <span asp-validation-for="Password" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <input type="checkbox" name="RememberMe" value="true">
+            <label>Запомнить меня</label>
+            <a class="form-control" asp-area="" asp-controller="Account" asp-action="Register" asp-route-ReturnUrl="@Model.ReturnUrl">Регистрация</a>
+        </div>
+    </div>
+    <div>
+        <button type="submit" asp-controller="Account" asp-action="Login">Войти</button>
+    </div>
+</form>

@@ -1,124 +1,219 @@
-﻿using curs.Areas.Admin.Models;
-using curs.Models;
+﻿using OnlineShop.Areas.Admin.Models;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Win32;
+using Microsoft.AspNetCore.Identity;
+using OnlineShop.Db.Models;
+using OnlineShop.Helper;
+using OnlineShop.Db;
+using Microsoft.AspNetCore.Authorization;
 
-namespace curs.Areas.Admin.Controllers
+namespace OnlineShop.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(Constans.AdminRoleName)]
+    [Authorize(Roles = Constans.AdminRoleName)]
     public class UserController : Controller
     {
-        private readonly IUsersRepository usersRepository;
-        private readonly IRolesRepository rolesRepository;
+        private readonly UserManager<User> usersManager;
+        private readonly RoleManager<IdentityRole> rolesManager;
 
-        public UserController(IUsersRepository usersRepository, IRolesRepository rolesRepository)
+        public UserController(UserManager<User> usersManager, RoleManager<IdentityRole> rolesManager)
         {
-            this.usersRepository = usersRepository;
-            this.rolesRepository = rolesRepository;
+            this.usersManager = usersManager;
+            this.rolesManager = rolesManager;
         }
 
-       
+
         public IActionResult Index()
         {
-            var users=usersRepository.GetAll();
-            return View(users);
+            var users = usersManager.Users.ToList();
+
+            return View(users.Select(x => x.ToUserViewModel(usersManager)).ToList());
         }
 
-        public IActionResult Details(Guid userId)
+        public async Task<IActionResult> DetailsAsync(string userName)
         {
-            var user=usersRepository.TryGetById(userId);
-            return View(user);
+
+            var user = await usersManager.FindByNameAsync(userName);
+            return View(user.ToUserViewModel(usersManager));
         }
 
-        public IActionResult ChangePassword(Guid userId)
+        public IActionResult ChangePassword(string userName)
         {
-			var user = usersRepository.TryGetById(userId);
-			ViewData["userId"] = userId;
-            ViewData["userName"] = user.UserName;
-			return View();
-		}
+            var changePassword = new ChangePassword
+            {
+                UserName = userName
+            };
+            return View(changePassword);
+        }
 
         [HttpPost]
-        public IActionResult ChangePassword(Guid id, string password)
+        public async Task<IActionResult> ChangePasswordAsync(ChangePassword changePassword)
         {
-            usersRepository.ChangePassword(id, password);
-            return RedirectToAction(nameof(Index));
+            if (changePassword.UserName == changePassword.Password)
+            {
+                ModelState.AddModelError("", "Логин и пароль не должны совпадать");
+            }
+            if (ModelState.IsValid)
+            {
+                var user = await usersManager.FindByNameAsync(changePassword.UserName);
+                //перенести в личный кабинет пользователя
+                var newHashPassword = usersManager.PasswordHasher.HashPassword(user, changePassword.Password);
+                user.PasswordHash = newHashPassword;
+                await usersManager.UpdateAsync(user);
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(changePassword));
         }
 
-		public IActionResult ChangeAccess(Guid userId)
-		{
-			var user = usersRepository.TryGetById(userId);
-			var roles = rolesRepository.GetAllRoles();
-			ViewData["userId"] = userId;
-			ViewData["userName"] = user.UserName;
-			ViewData["userRole"] = user.Role.Name;
-			return View(roles);
-		}
 
-		[HttpPost]
-		public IActionResult ChangeAccess(Guid userId, string role)
-		{
-			usersRepository.ChangeAccess(userId, role);
-			return RedirectToAction(nameof(Index));
-		}
 
-		public IActionResult Add()
+        public IActionResult Add()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Add(Register register)
+        public async Task<IActionResult> AddAsync(AddUser addUser)
         {
-            var userAccount = usersRepository.TryGetByName(register.UserName);
+            var userAccount = await usersManager.FindByNameAsync(addUser.UserName);
             if (userAccount != null)
             {
                 ModelState.AddModelError("", "Пользователь с таким именем уже есть.");
-                return View(register);
+                return View(addUser);
             }
-            if (register.UserName == register.Password)
+            if (addUser.UserName == addUser.Password)
             {
                 ModelState.AddModelError("", "Имя пользователя и пароль не должны совпадать");
-                return View(register);
+                return View(addUser);
             }
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(register);
+                User user = new User { Email = addUser.UserName, UserName = addUser.UserName, PhoneNumber = addUser.Phone };
+                //Добавление пользователя
+                var result = await usersManager.CreateAsync(user, addUser.Password);
+                if (result.Succeeded)
+                {
+                    await usersManager.AddToRoleAsync(user, Constans.UserRoleName);
+                }
             }
-            usersRepository.Add(new User(register.UserName, register.Password, register.FirstName, register.LastName, register.Phone));
-            return RedirectToAction("Products");
+
+            // usersRepository.Add(new User(register.UserName, register.Password, register.FirstName, register.LastName, register.Phone));
+
+
+            return RedirectToAction("Index");
         }
 
-        public IActionResult Del(Guid userId)
+        public async Task<IActionResult> DelAsync(string userName)
         {
-            usersRepository.Del(userId);
+            var user = await usersManager.FindByNameAsync(userName);
+            await usersManager.DeleteAsync(user);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(Guid userId)
+
+        public async Task<IActionResult> EditAsync(string userId)
         {
-            var user = usersRepository.TryGetById(userId);
-            var editUser = new EditUser();
-            editUser.UserName = user.UserName;
-            editUser.FirstName = user.FirstName;
-            editUser.LastName = user.LastName;
-            editUser.Phone = user.Phone;
-            ViewData["userId"] = userId;
+            var user = await usersManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var editUser = new EditUser
+            {
+                UserName = user.UserName,
+                Phone = user.PhoneNumber
+            };
             return View(editUser);
         }
 
+
         [HttpPost]
-        public IActionResult Edit(EditUser user, Guid userId)
+        public async Task<IActionResult> EditAsync(string userId, EditUser model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(user);
+                var user = await usersManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+
+                user.UserName = model.UserName;
+                user.PhoneNumber = model.Phone;
+
+                var result = await usersManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
             }
-            usersRepository.Edit(user, userId);
-            return RedirectToAction(nameof(Index));
+
+            return View(model);
         }
 
-       
 
+        public async Task<IActionResult> EditRightsAsync(string userId)
+        {
+            var user = await usersManager.FindByIdAsync(userId);
+            var roles = rolesManager.Roles.ToList();
+            var assignedRoles = await usersManager.GetRolesAsync(user);
+            var model = new EditRightsViewModel
+            {
+                Id = userId,
+                UserName = user.UserName,
+
+                Roles = roles.Select(x => new RolesViewModel { Name = x.Name }).ToList(),
+                AssignedRoles = assignedRoles.ToList()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditRightsAsync(string userId, List<string> roleNames)
+        {
+
+            var user = await usersManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(); // Если пользователь не найден
+            }
+
+            // Получаем текущие роли пользователя
+            var currentRoles = await usersManager.GetRolesAsync(user);
+
+            // Удаляем все текущие роли пользователя
+            var removeResult = await usersManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                ModelState.AddModelError("", "Не удалось удалить текущие роли.");
+                return View(); // Возвращаем представление с ошибкой
+            }
+
+            // Добавляем новые роли
+            if (roleNames != null && roleNames.Any()) // Проверяем, были ли выбраны роли
+            {
+                var addResult = await usersManager.AddToRolesAsync(user, roleNames);
+                if (!addResult.Succeeded)
+                {
+                    ModelState.AddModelError("", "Не удалось добавить роли.");
+                    return View();
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
     }
+
 }
+

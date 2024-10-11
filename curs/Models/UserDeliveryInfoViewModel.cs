@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace curs.Models
+namespace OnlineShop.Models
 {
     public class UserDeliveryInfoViewModel
     {

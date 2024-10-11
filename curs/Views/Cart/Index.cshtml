@@ -25,9 +25,9 @@ else
                             <td>@item.Product.Name</td>
                             <td>@item.Product.Cost</td>
                             <td>
-                                <a class="btn btn-outline-warning text-black" href="/cart/decreaseAmount?productId=@item.Product.Id" role="button">-</a>
+                                <a class="btn btn-outline-warning text-black" asp-area="" asp-controller="Cart" asp-action="DecreaseAmount" asp-route-productId="@item.Product.Id" role="button">-</a>
                                 @item.Amount
-                                <a class="btn btn-outline-warning text-black" href="/cart/add?productId=@item.Product.Id" role="button">+</a>
+                                <a class="btn btn-outline-warning text-black" asp-area="" asp-controller="Cart" asp-action="Add" asp-route-productId="@item.Product.Id" role="button">+</a>
                             </td>
                             <td>@item.Cost</td>
 

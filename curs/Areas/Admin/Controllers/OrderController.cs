@@ -1,11 +1,14 @@
-﻿using curs.Helper;
-using curs.Models;
+﻿using OnlineShop.Helper;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
 using OnlineShop.Db.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace curs.Areas.Admin.Controllers
+namespace OnlineShop.Areas.Admin.Controllers
 {
+    [Area(Constans.AdminRoleName)]
+   // [Authorize(Roles =Constans.AdminRoleName)]
     public class OrderController : Controller
     {
         
@@ -18,26 +21,26 @@ namespace curs.Areas.Admin.Controllers
         }
         
 
-        [Area("Admin")]
-        public IActionResult Index()
+        
+        public async Task<IActionResult> Index()
         {
-            var orders = ordersRepository.GetAllOrders();
+            var orders = await ordersRepository.GetAllOrdersAsync();
             return View(orders.Select(x=>Mapping.ToOrderViewModel(x)).ToList());
         }
 
-        [Area("Admin")]
-        public IActionResult Detail(Guid id)
+        
+        public async Task<IActionResult> DetailAsync(Guid id)
         {
-            var order = ordersRepository.TryGetById(id);
+            var order = await ordersRepository.TryGetByIdAsync(id);
 
             return View(Mapping.ToOrderViewModel(order));
         }
 
         [HttpPost]
-        [Area("Admin")]
-        public IActionResult UpdateOrderStatus(Guid Id, OrderStatusesViewModel Status)
+        
+        public async Task<IActionResult> UpdateOrderStatusAsync(Guid Id, OrderStatusesViewModel Status)
         {
-            ordersRepository.UpdateStatus(Id, (OrderStatuses)(int)Status);
+            await ordersRepository.UpdateStatusAsync(Id, (OrderStatuses)(int)Status);
             return RedirectToAction("Index");
         }
 
