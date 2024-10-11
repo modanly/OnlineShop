@@ -1,8 +1,8 @@
-﻿using curs.Areas.Admin.Models;
+﻿using OnlineShop.Areas.Admin.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 
-namespace curs.Models
+namespace OnlineShop.Models
 {
     public class ProductViewModel
     {
@@ -14,7 +14,7 @@ namespace curs.Models
         public decimal Cost { get; set; }
         [Required]
         public string Description { get; set; }
-        public string ImagePath { get; set; }
-
+        public List<string> ImagesPaths { get; set; }
+        public string ImagePath => ImagesPaths.Count == 0 ? "/images/Products/image3.jpeg" : ImagesPaths[0];
     }
 }

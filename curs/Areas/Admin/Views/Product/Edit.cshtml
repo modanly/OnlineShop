@@ -1,6 +1,6 @@
-﻿@model ProductViewModel
+﻿@model EditProductViewModel
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <h4>Редактирование товара</h4>
     <br />
     <div class="row">
@@ -18,18 +18,32 @@
     </div>
     <br />
     <div class="row">
-        <label for="imagePath" class="col-sm-2 col-form-label">Изорбражение товара:</label>
-        <div class="col-sm-8">
-            <input name="ImagePath" type="text" class="form-control" id="imagePath" value="@Model.ImagePath">
-        </div>
-    </div>
-    <br />
-    <div class="row">
         <label for="description" class="col-sm-2 col-form-label">Описание товара:</label>
         <div class="col-sm-8">
             <input name="Description" type="text" class="form-control" id="description" value="@Model.Description">
         </div>
     </div>
+    <br />
+    <div class="row">
+        <label for="imagePath" class="col-sm-2 col-form-label">Изорбражения товара:</label>
+        <div class="col-sm-8">
+            
+            @foreach (var imagePath in Model.ImagesPaths)
+            {
+                <div>
+                    <img src="@imagePath" width="150" height="150" alt="Изображение товара" />
+                </div>
+            }
+
+        </div>
+    </div>
+    <div class="row">
+        <label asp-for="UploadedFiles">Загрузить изображения</label>
+        <input type="file" name="UploadedFiles" multiple accept="image/*" class="form-control">
+        <span asp-validation-for="UploadedFiles" />
+    </div>
+    <br />
+    
     <br />
     <br />
     <button type="submit" class="btn btn-primary" asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id">Сохранить</button>

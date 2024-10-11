@@ -1,26 +1,33 @@
-﻿using curs.Helper;
-using curs.Models;
+﻿using OnlineShop.Helper;
+using OnlineShop.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
+using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
+using OnlineShop.Db.Models;
 
-namespace curs.Controllers
+namespace OnlineShop.Controllers
 {
     public class ProductController : Controller
     {
         private readonly IProductsRepository productRepository;
-        public ProductController(IProductsRepository productRepository)
+        private readonly IMemoryCache cache;
+
+        public ProductController(IProductsRepository productRepository, IMemoryCache cache)
         {
             this.productRepository = productRepository;
+            this.cache = cache;
         }
-        public IActionResult Index(Guid id)
+        public IActionResult Index(Guid productId)
         {
-            var product = productRepository.TryGetById(id);
-            return View(Mapping.ToProductViewModel(product));
-           
-        }
-        
+            cache.TryGetValue<Product>(productId, out var product);
 
-      
+            return View(product.ToProductViewModel());
+
+        }
+
+
+
     }
 }

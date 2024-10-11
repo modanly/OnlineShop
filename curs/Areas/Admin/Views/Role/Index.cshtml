@@ -1,4 +1,4 @@
-﻿@model List<Roles>;
+﻿@model List<RolesViewModel>;
 <form method="post">
 <div class="row">
         <div class="col-lg-3">
@@ -33,7 +33,7 @@
                                 <tr>
                                     <td>@role.Name</td>
                                     <td class="col-4 text-end">
-                                            <button class="btn btn-outline-warning" asp-area="Admin" asp-controller="Role" asp-action="Del" name="Name" value="@role.Name"><i class="bi bi-trash-fill"> Удалить роль </i></button>
+                                            <button class="btn btn-outline-warning" asp-area="Admin" asp-controller="Role" asp-action="Del" name="Name" asp-route-roleName="@role.Name"><i class="bi bi-trash-fill"> Удалить роль </i></button>
                                     </td>
                                 </tr>
                             }

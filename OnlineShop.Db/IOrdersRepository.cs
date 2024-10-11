@@ -4,9 +4,9 @@ namespace OnlineShop.Db
 {
     public interface IOrdersRepository
     {
-        void Add(Order order);
-        List<Order> GetAllOrders();
-        Order TryGetById(Guid id);
-        void UpdateStatus(Guid orderId, OrderStatuses status);
+        Task AddAsync(Order order);
+        Task<List<Order>> GetAllOrdersAsync();
+        Task<Order> TryGetByIdAsync(Guid id);
+        Task UpdateStatusAsync(Guid orderId, OrderStatuses status);
     }
 }
