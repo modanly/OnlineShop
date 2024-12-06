@@ -3,18 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Models;
 using OnlineShop.Helper;
 using OnlineShop.Db.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace OnlineShop.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly ICartsRepository cartsRepository;
         private readonly IOrdersRepository ordersRepository;
-
-        public OrderController(ICartsRepository cartsRepository, IOrdersRepository ordersRepository)
+        private readonly UserManager<User> userManager;
+        public OrderController(ICartsRepository cartsRepository, IOrdersRepository ordersRepository, UserManager<User> userManager)
         {
             this.cartsRepository = cartsRepository;
             this.ordersRepository = ordersRepository;
+            this.userManager = userManager;
         }
 
         public IActionResult Index()
@@ -23,7 +27,7 @@ namespace OnlineShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult Buy(UserDeliveryInfoViewModel user)
+        public async Task<IActionResult> BuyAsync(UserDeliveryInfoViewModel user)
         {
             if (!user.Name.All(c => char.IsLetter(c) || c == ' '))
             {
@@ -37,16 +41,16 @@ namespace OnlineShop.Controllers
             {
                 return View("Index");
             }
-
-            var existingCart = cartsRepository.TryGetByUserId(Constans.UserId);
+            var userId = userManager.GetUserId(User);
+            var existingCart = await cartsRepository.TryGetByUserIdAsync(userId);
             
             var order = new Order
             {
                 User = Mapping.ToUser(user),
                 Items = existingCart.Items
             };
-            ordersRepository.Add(order);
-            cartsRepository.Clear(Constans.UserId);
+            await ordersRepository.AddAsync(order);
+            await cartsRepository.ClearAsync(userId);
 
             return View();
         }

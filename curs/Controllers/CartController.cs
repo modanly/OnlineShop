@@ -2,44 +2,53 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using OnlineShop.Db.Models;
 
 namespace OnlineShop.Controllers
 {
+    [Authorize]
     public class CartController : Controller
     {
         private readonly IProductsRepository productRepository;
         private readonly ICartsRepository cartsRepository;
+        private readonly UserManager<User> userManager;
 
-        public CartController(IProductsRepository productRepository, ICartsRepository cartRepository)
+        public CartController(IProductsRepository productRepository, ICartsRepository cartRepository, UserManager<User> userManager)
         {
             this.productRepository = productRepository;
             this.cartsRepository = cartRepository;
+            this.userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
-            var cart = cartsRepository.TryGetByUserId(Constans.UserId);
+            var userId = userManager.GetUserId(User);
+            var cart = await cartsRepository.TryGetByUserIdAsync(userId);
             return View(Mapping.ToCartViewModel(cart));
         }
-        public IActionResult Add(Guid productId)
+        public async Task<IActionResult> AddAsync(Guid productId)
         {
-            var product = productRepository.TryGetById(productId);
-            cartsRepository.Add(product, Constans.UserId); 
+            var userId = userManager.GetUserId(User);
+            var product = await productRepository.TryGetByIdAsync(productId);
+            await cartsRepository.AddAsync(product, userId); 
             return RedirectToAction("Index");
            
         }
 
-        public IActionResult DecreaseAmount(Guid productId)
+        public async Task<IActionResult> DecreaseAmountAsync(Guid productId)
         {
-            cartsRepository.DecreaseAmount(productId, Constans.UserId);
+            var userId = userManager.GetUserId(User);
+            await cartsRepository.DecreaseAmountAsync(productId, userId);
             return RedirectToAction("Index");
 
         }
 
-        public IActionResult Clear() 
+        public async Task<IActionResult> ClearAsync() 
         {
-            cartsRepository.Clear(Constans.UserId);
+            var userId=userManager.GetUserId(User);
+            await cartsRepository.ClearAsync(userId);
             return RedirectToAction("Index");
         }
     }

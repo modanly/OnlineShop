@@ -14,7 +14,7 @@ namespace OnlineShop.Models
         public decimal Cost { get; set; }
         [Required]
         public string Description { get; set; }
-        public string ImagePath { get; set; }
-
+        public List<string> ImagesPaths { get; set; }
+        public string ImagePath => ImagesPaths.Count == 0 ? "/images/Products/image3.jpeg" : ImagesPaths[0];
     }
 }

@@ -1,59 +1,70 @@
 ﻿using OnlineShop.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
+using OnlineShop.Db;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace OnlineShop.Areas.Admin.Controllers
 {
+    [Area(Constans.AdminRoleName)]
+    [Authorize(Roles = Constans.AdminRoleName)]
     public class RoleController : Controller
     {
 
-        private readonly IRolesRepository rolesRepository;
+        private readonly RoleManager<IdentityRole> rolesManager;
 
-        public RoleController(IRolesRepository rolesRepository)
+        public RoleController(RoleManager<IdentityRole> rolesManager)
         {
-            this.rolesRepository = rolesRepository;
+            this.rolesManager = rolesManager;
         }
 
 
-        [Area("Admin")]
+        
         public IActionResult Index()
         {
-            var roles = rolesRepository.GetAllRoles();
-            return View(roles);
+            var roles = rolesManager.Roles.ToList();
+            return View(roles.Select(x => new RolesViewModel { Name = x.Name }).ToList());
         }
-        [Area("Admin")]
+        
         public IActionResult Add()
         {
             return View();
         }
 
-        [Area("Admin")]
+        
         [HttpPost]
-        public IActionResult Add(Roles role)
+        public async Task<IActionResult> AddAsync(RolesViewModel role)
         {
-            var roles = rolesRepository.GetAllRoles();
-            if (roles.FirstOrDefault(r => r.Name == role.Name) != null)
+            var result=await rolesManager.CreateAsync(new IdentityRole(role.Name));
+            if(result.Succeeded)
             {
-                ModelState.AddModelError("", "Такая роль уже есть");
+                return RedirectToAction("Index");
             }
-            if (!ModelState.IsValid)
+            else
             {
-                return View(role);
+                foreach(var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty,error.Description);
+                }
             }
-            rolesRepository.Add(role);
-            return RedirectToAction("Index");
+            return View(role);
         }
 
 
 
-        [Area("Admin")]
+        
         [HttpPost]
-        public IActionResult Del(string Name)
+        public async Task<IActionResult> DelAsync(string roleName)
         {
-            var roles = rolesRepository.GetAllRoles();
-            var currentRole = roles.FirstOrDefault(role => role.Name == Name);
-            rolesRepository.Del(currentRole);
+            var role = await rolesManager.FindByNameAsync(roleName);
+            if (role != null)
+            {
+                await rolesManager.DeleteAsync(role);
+            }
             return RedirectToAction("Index");
         }
+
+
 
     }
 }

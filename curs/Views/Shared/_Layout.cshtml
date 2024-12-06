@@ -22,14 +22,35 @@
                 </button>
                 <div class="navbar-nav">
                     <a class="nav-link active ms-5" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
-                    <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">Администратор</a>
+                    @if (User.IsInRole(Constans.AdminRoleName))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">Администратор</a>
+                        </li>
+                    }
+                   
                     <a class="nav-link" href="#">Контакты</a>
                 </div>
             </div>
             
             <div class="conteiner-fluid">
                 <div class="navbar-nav">
-                    <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login"><img src="/images/account.png" alt="" width="30" height="30" class="d-inline-block align-text-top"></a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item text-dark">
+                            @User.Identity.Name
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Выход</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index", "Home")"><img src="/images/account.png" alt="" width="30" height="30" class="d-inline-block align-text-top"></a>
+                        </li>
+                    }
+                   
                     <a class="btn btn-light position-relative mx-3" asp-area="" asp-controller="Cart" asp-action="Index">
                         <img src="/images/cart.png" alt="" width="30" height="30" class="d-inline-block align-text-top">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">

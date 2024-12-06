@@ -4,6 +4,8 @@ using OnlineShop.Models;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Db;
 using System.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
+using OnlineShop.Db.Models;
 
 namespace OnlineShop.Controllers
 {
@@ -12,18 +14,21 @@ namespace OnlineShop.Controllers
 
         private readonly IProductsRepository productRepository;
         private readonly ICartsRepository cartsRepository;
-        public HomeController(IProductsRepository productRepository, ICartsRepository cartsRepository)
+        private readonly IMemoryCache cache;
+        public HomeController(IProductsRepository productRepository, ICartsRepository cartsRepository, IMemoryCache cache)
         {
             this.productRepository = productRepository;
             this.cartsRepository = cartsRepository;
+            this.cache = cache;
         }
 
 
         public IActionResult Index()
         {
-            var products = productRepository.GetAll();
+            cache.TryGetValue<List<Product>>(Constans.KeyCacheAllProducts, out var products);
+            
            
-            return View(Mapping.ToProductViewModels(products));
+            return View(products.ToProductViewModels());
         }
 
      
