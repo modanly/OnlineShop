@@ -15,8 +15,7 @@ namespace OnlineShop.Db.Models
         public string Description { get; set; }
         public List<Image> Images { get; set; }
 
-        [Timestamp]
-        public byte[] ConcurrencyToken { get; set; }
+       
         public List<CartItem> CartItems { get; set; }
        public Product() 
         {

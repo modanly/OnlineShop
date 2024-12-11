@@ -82,7 +82,7 @@ using (var serviceScope = app.Services.CreateScope())
     var services = serviceScope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<User>>();
     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    IdentityInitializer.Initialize(userManager, rolesManager);
+    await IdentityInitializer.Initialize(userManager, rolesManager);
 }
 
 app.Run();

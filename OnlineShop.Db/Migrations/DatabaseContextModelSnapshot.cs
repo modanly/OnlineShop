@@ -37,7 +37,7 @@ namespace OnlineShop.Db.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Db.Models.CartItem", b =>
@@ -66,7 +66,7 @@ namespace OnlineShop.Db.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItem");
+                    b.ToTable("CartItem", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Db.Models.Image", b =>
@@ -123,7 +123,7 @@ namespace OnlineShop.Db.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Db.Models.Product", b =>
@@ -131,12 +131,6 @@ namespace OnlineShop.Db.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte[]>("ConcurrencyToken")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18, 4)");
@@ -151,7 +145,7 @@ namespace OnlineShop.Db.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
 
                     b.HasData(
                         new
@@ -194,7 +188,7 @@ namespace OnlineShop.Db.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserDeliveryInfo");
+                    b.ToTable("UserDeliveryInfo", (string)null);
                 });
 
             modelBuilder.Entity("OnlineShop.Db.Models.CartItem", b =>

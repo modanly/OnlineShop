@@ -41,7 +41,7 @@ namespace OnlineShop.Helper
                 Name = product.Name,
                 Cost = product.Cost,
                 Description = product.Description,
-                ConcurrencyToken= product.ConcurrencyToken,
+               
                 ImagesPaths = product.Images.ToPaths()
             };
         }
@@ -74,7 +74,7 @@ namespace OnlineShop.Helper
                 Name = editProduct.Name,
                 Cost = editProduct.Cost,
                 Description = editProduct.Description,
-                ConcurrencyToken= editProduct.ConcurrencyToken,
+              
                 Images = editProduct.ImagesPaths.ToImages()
             };
         }

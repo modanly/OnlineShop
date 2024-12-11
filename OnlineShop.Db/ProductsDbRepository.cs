@@ -34,28 +34,24 @@ namespace OnlineShop.Db
         }
         public async Task UpdateAsync(Product product)
         {
-            var existingProduct = await databaseContext.Products.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == product.Id);
+          
             
-            //var existingProduct = await TryGetByIdAsync(product.Id);
+            var existingProduct = await TryGetByIdAsync(product.Id);
 
 
 
-            // Устанавливаем оригинальный токен для оптимистической блокировки
-            //databaseContext.Entry(existingProduct).Property("ConcurrencyToken").OriginalValue = product.ConcurrencyToken;
-
-            // Обновление данных товара
+           
             existingProduct.Name = product.Name;
             existingProduct.Description = product.Description;
             existingProduct.Cost = product.Cost;
-            existingProduct.ConcurrencyToken = product.ConcurrencyToken;
+
 
             // Обновление изображений
             foreach (var image in product.Images)
             {
-                // Проверяем, если изображение новое, то добавляем его
                 if (!existingProduct.Images.Any(i => i.Url == image.Url))
                 {
-                    databaseContext.Images.Add(image);
+                    existingProduct.Images.Add(image);
                 }
             }
 

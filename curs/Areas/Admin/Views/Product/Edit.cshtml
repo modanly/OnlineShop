@@ -43,9 +43,7 @@
         <span asp-validation-for="UploadedFiles" />
     </div>
     <br />
-    <div>
-       <input name="ConcurrencyToken" type="hidden" id="ConcurrencyToken" value="@Convert.ToBase64String(Model.ConcurrencyToken)" />
-    </div>
+    
     <br />
     <br />
     <button type="submit" class="btn btn-primary" asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.Id">Сохранить</button>

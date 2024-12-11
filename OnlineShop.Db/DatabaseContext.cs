@@ -44,9 +44,6 @@ namespace OnlineShop.Db
 
             modelBuilder.Entity<Image>().HasData(image1, image2);
 
-            modelBuilder.Entity<Product>()
-    .Property(p => p.ConcurrencyToken)
-    .IsRowVersion();
 
             modelBuilder.Entity<Product>().HasData(new List<Product>()
             {

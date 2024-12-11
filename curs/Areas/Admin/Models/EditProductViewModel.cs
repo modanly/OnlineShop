@@ -14,6 +14,6 @@ namespace OnlineShop.Areas.Admin.Models
         public List<string> ImagesPaths { get; set; } = new List<string>();
         public IFormFile[]? UploadedFiles { get; set; }
        
-        public byte[] ConcurrencyToken { get; set; }
+       
     }
 }

@@ -61,19 +61,18 @@ namespace OnlineShop.Areas.Admin.Controllers
         {
             var product = await productRepository.TryGetByIdAsync(productId);
             var productViewModel = product.ToEditProductViewModel();
-            productViewModel.ConcurrencyToken = product.ConcurrencyToken;
+            
             
             return View(productViewModel);
         }
 
         [HttpPost]
         [Area("Admin")]
-        [ValidateAntiForgeryToken]
-         public async Task<IActionResult> EditAsync(EditProductViewModel product)
+
+        public async Task<IActionResult> EditAsync(EditProductViewModel product)
         {
             if (ModelState.IsValid)
             {
-                
                 var productToUpdate = await productRepository.TryGetByIdAsync(product.Id);
                 if (productToUpdate == null)
                 {
@@ -81,70 +80,24 @@ namespace OnlineShop.Areas.Admin.Controllers
                     return View(product);
                 }
 
-                // Логируем перед тем, как сохранить
-                _logger.LogInformation($"Конкуренция: старое значение ConcurrencyToken: {Convert.ToBase64String(productToUpdate.ConcurrencyToken)}");
-                _logger.LogInformation($"Конкуренция: переданное значение ConcurrencyToken: {Convert.ToBase64String(product.ConcurrencyToken)}");
-
-                try
+                // Обработка загруженных файлов
+                if (product.UploadedFiles != null && product.UploadedFiles.Any())
                 {
-                    await productRepository.UpdateAsync(product.ToProduct());
-                    return RedirectToAction(nameof(Index));
+                    var addedImagesPaths = imagesProvider.SafeFiles(product.UploadedFiles, ImageFolders.Products);
+                    product.ImagesPaths.AddRange(addedImagesPaths);
                 }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    _logger.LogError(ex, "Ошибка конкурентности при сохранении данных продукта.");
 
-                    var exceptionEntry = ex.Entries.Single();
-                    var clientValues = (Product)exceptionEntry.Entity;
-                    var databaseEntry = await exceptionEntry.GetDatabaseValuesAsync();
+                // Преобразуем модель в объект продукта
+                var updatedProduct = product.ToProduct();
 
-                    if (databaseEntry == null)
-                    {
-                        _logger.LogInformation($"Продукт с Id {product.Id} был удален другим пользователем.");
-                        ModelState.AddModelError(string.Empty, "Невозможно сохранить изменения, товар был удален другим пользователем.");
-                    }
-                    else
-                    {
-                        var databaseValues = (Product)databaseEntry.ToObject();
+                // Обновление данных продукта и его изображений
+                await productRepository.UpdateAsync(updatedProduct);
 
-                        _logger.LogInformation($"Конкуренция: актуальные значения для продукта с Id {product.Id}: Name = {databaseValues.Name}, Cost = {databaseValues.Cost}");
-
-                        // Применяем актуальные значения, если данные изменены
-                        if (databaseValues.Name != clientValues.Name)
-                        {
-                            ModelState.AddModelError("Name", $"Текущее значение: {databaseValues.Name}");
-                        }
-                        if (databaseValues.Cost != clientValues.Cost)
-                        {
-                            ModelState.AddModelError("Cost", $"Текущее значение: {databaseValues.Cost}");
-                        }
-                        if (databaseValues.Description != clientValues.Description)
-                        {
-                            ModelState.AddModelError("Description", $"Текущее значение: {databaseValues.Description}");
-                        }
-
-                        // Обновляем токен для повторной отправки
-                        product.ConcurrencyToken = databaseValues.ConcurrencyToken;
-                        ModelState.Remove("ConcurrencyToken");
-
-                        // Сообщаем о том, что данные были изменены другим пользователем
-                        ModelState.AddModelError(string.Empty, "Данные были изменены другим пользователем.");
-                    }
-                }
+                return RedirectToAction(nameof(Index));
             }
 
-            // Обработка загруженных файлов
-            if (product.UploadedFiles != null && product.UploadedFiles.Any())
-            {
-                var addedImagesPaths = imagesProvider.SafeFiles(product.UploadedFiles, ImageFolders.Products);
-                product.ImagesPaths.AddRange(addedImagesPaths);
-            }
-
-            // Повторное обновление данных (когда ошибок нет)
-            await productRepository.UpdateAsync(product.ToProduct());
-            return RedirectToAction(nameof(Index));
+            return View(product);
         }
-
         [Area("Admin")]
         public async Task<IActionResult> DelAsync(Guid productId)
         {
