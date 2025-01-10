@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  mssqlserver:
+    container_name: online_shop_app_db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment: 
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=Strong!Passw0rd
+
+  onlineshop:
+    container_name: online_shop_app_mvc
+    image: ${DOCKER_REGISTRY-}onlineshop
+    build:
+      context: .
+      dockerfile: curs/Dockerfile
+    ports:
+        - 5000:80
+    depends_on:
+        - mssqlserver
+    restart: unless-stopped
