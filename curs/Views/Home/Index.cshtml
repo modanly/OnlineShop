@@ -73,7 +73,7 @@
                         </div>
 
                         <div class="card-body">
-                            <h5 class="price">@product.Cost &#8381;</h5>
+                            <h5 class="price">@product.Cost.ToString("F2") &#8381;</h5>
                             <h6 class="card-title">
                                 <a class="link-dark link-no-underline" asp-controller="Product" asp-action="Index" asp-route-productId="@product.Id">@product.Name</a>
                             </h6>
